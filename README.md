@@ -48,5 +48,13 @@ The extension uses a **rule-based detection model**:
   - `confirm`
 - Calculates a risk score
 - Displays a warning UI if the score exceeds threshold
+## 📸 Demo Screenshots
+
+### 🔴 Phishing Warning UI
+![Warning UI](screenshots/final-warning.png)
+
+### 🔍 Popup Scanner
+![Popup UI](screenshots/popup-scan.png)
+
 
 ---
