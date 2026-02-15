@@ -1,38 +1,52 @@
 console.log("PhishShield loaded on page");
 
-function showModernWarning() {
+function showModernWarning(risk, level) {
 
-    const overlay = document.createElement("div");
-    overlay.id = "phishshield-overlay";
+
+const overlay = document.createElement("div");
+overlay.id = "phishshield-overlay";
+
+// create dark background layer
+const backdrop = document.createElement("div");
+backdrop.id = "phishshield-backdrop";
+
+document.body.appendChild(backdrop);
+
 
     overlay.innerHTML = `
-    <div class="phishshield-box">
+<div class="phishshield-box">
 
-        <div class="phishshield-header">
-            <div class="title">🛡️ PhishShield</div>
-            <div class="badge">HIGH RISK</div>
-        </div>
-
-        <div class="phishshield-body">
-            <p class="main-text">
-                This page looks like a <b>phishing website</b>.
-            </p>
-
-            <p class="sub-text">
-                Do NOT enter passwords, OTP, or banking details.
-            </p>
-        </div>
-
-        <button id="phishshield-close">✔ I Understand</button>
-
+    <div class="phishshield-header">
+        <div class="title">🛡️ PhishShield</div>
+        <div class="badge">${level}</div>
     </div>
-    `;
+
+    <div class="phishshield-body">
+        <p class="main-text">
+            This page looks like a <b>phishing website</b>.
+        </p>
+
+        <p class="sub-text">
+            Do NOT enter passwords, OTP, or banking details.
+        </p>
+
+        <p class="risk-score">
+            Risk Score: <b>${risk}%</b>
+        </p>
+    </div>
+
+    <button id="phishshield-close">✔ I Understand</button>
+
+</div>
+`;
 
     document.body.appendChild(overlay);
 
-    document.getElementById("phishshield-close").onclick = () => {
-        overlay.remove();
-    };
+document.getElementById("phishshield-close").onclick = () => {
+    overlay.remove();
+    document.getElementById("phishshield-backdrop").remove();
+};
+
 }
 
 
@@ -51,10 +65,23 @@ function detectPhishing() {
         if (url.includes(word)) score++;
     });
 
-    if (score >= 1) {
-        showModernWarning();
+    // Convert to percentage risk
+    let risk = Math.min(score * 20, 100);
+
+    // Determine severity level
+    let level = "Safe";
+    if (risk >= 60) level = "🚨 Dangerous";
+    else if (risk >= 20) level = "⚠️ Suspicious";
+    else level = "✅ Safe";
+
+    console.log("Risk:", risk, "Level:", level);
+
+    // Show warning only if suspicious or dangerous
+    if (risk >= 20) {
+        showModernWarning(risk, level);
     }
 }
+
 
 detectPhishing();
 
@@ -62,6 +89,13 @@ detectPhishing();
 // 🎨 STYLE INJECTION
 const style = document.createElement("style");
 style.innerHTML = `
+#phishshield-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999998;
+}
+
 
 #phishshield-overlay {
     position: fixed;
@@ -133,6 +167,12 @@ style.innerHTML = `
     font-size: 13px;
     color: #cbd5e1;
 }
+    .risk-score {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #facc15;
+}
+
 
 /* BUTTON */
 #phishshield-close {
@@ -164,6 +204,16 @@ style.innerHTML = `
         opacity: 1;
     }
 }
+    // Ask background script to check URL using API
+chrome.runtime.sendMessage(
+    { action: "checkURL", url: window.location.href },
+    (response) => {
+        if (response && response.isPhishing) {
+            showModernWarning();   // your existing warning UI
+        }
+    }
+);
+
 
 `;
 

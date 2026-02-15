@@ -48,6 +48,13 @@ The extension uses a **rule-based detection model**:
   - `confirm`
 - Calculates a risk score
 - Displays a warning UI if the score exceeds threshold
+
+## 🌐 Real-Time Threat Detection
+
+PhishShield integrates with the **Google Safe Browsing API** to detect known malicious and phishing URLs in real time.
+
+This provides cloud-based threat intelligence along with local rule-based detection.
+
 ## 📸 Demo Screenshots
 
 ### 🔴 Phishing Warning UI
@@ -55,6 +62,8 @@ The extension uses a **rule-based detection model**:
 
 ### 🔍 Popup Scanner
 ![Popup UI](screenshots/popup-scan.png)
+
+
 
 
 ---
