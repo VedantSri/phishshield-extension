@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+maildir/
+*.csv
+*.h5
+*.pkl
